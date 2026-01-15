@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ieHRMS - Gamified Survey</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Game Header -->
+        <header class="game-header">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-text">Progress: <span id="progressText">0%</span></div>
+            </div>
+            <div class="score-container">
+                <div class="score">🎮 <span id="score">0</span> XP</div>
+            </div>
+        </header>
+
+        <!-- Game Title -->
+        <div class="game-title">
+            <h1><i class="fas fa-gamepad"></i> ieHRMS Module Explorer</h1>
+            <p class="subtitle">Rate our modules and earn XP! Help us improve your experience.</p>
+        </div>
+
+        <!-- Survey Container -->
+        <div class="survey-container">
+            <div class="module-header" id="moduleHeader">
+                <h2><i class="fas fa-tasks" id="moduleIcon"></i> <span id="moduleName">Loading...</span></h2>
+                <div class="module-tag" id="moduleTag">Module</div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number">Question <span id="questionNum">1</span> of <span id="totalQuestions">8</span></div>
+                <h3 class="question-text" id="questionText">Loading question...</h3>
+                
+                <!-- Emoji Rating System -->
+                <div class="rating-section">
+                    <div class="emoji-container">
+                        <div class="emoji" id="ratingEmoji">😐</div>
+                        <div class="emoji-label" id="emojiLabel">Neutral</div>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <div class="slider-labels">
+                            <span>😢 Very Poor</span>
+                            <span>😐 Neutral</span>
+                            <span>😍 Excellent</span>
+                        </div>
+                        <input type="range" min="0" max="5" value="3" class="slider" id="ratingSlider">
+                        <div class="slider-ticks">
+                            <span>0</span>
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                        </div>
+                    </div>
+                    
+                    <div class="selected-rating">
+                        Selected Rating: <span class="rating-value" id="ratingValue">3</span>/5
+                    </div>
+                </div>
+
+                <!-- Remarks Section -->
+                <div class="remarks-section">
+                    <label for="remarks"><i class="fas fa-comment-dots"></i> Additional Comments (Optional):</label>
+                    <textarea id="remarks" placeholder="Share your thoughts about this module... What features do you like or want to see improved?"></textarea>
+                    <div class="char-count">Characters: <span id="charCount">0</span>/300</div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="button-container">
+                    <button class="btn btn-prev" id="prevBtn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="btn btn-next" id="nextBtn">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-submit" id="submitBtn" style="display: none;">
+                        <i class="fas fa-paper-plane"></i> Submit Survey
+                    </button>
+                </div>
+            </div>
+
+            <!-- XP Progress -->
+            <div class="xp-progress">
+                <div class="xp-label">Your Survey Progress</div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xpFill"></div>
+                </div>
+                <div class="xp-text">Complete all questions to earn <strong>100 XP</strong>!</div>
+            </div>
+        </div>
+
+        <!-- Modules Overview -->
+        <div class="modules-overview">
+            <h3><i class="fas fa-layer-group"></i> ieHRMS Modules</h3>
+            <div class="modules-grid">
+                <div class="module-card" data-module="Recruitment">
+                    <div class="module-icon"><i class="fas fa-user-tie"></i></div>
+                    <h4>Recruitment</h4>
+                    <p>Job posting, applicant tracking, hiring workflow</p>
+                </div>
+                <div class="module-card" data-module="ESSP">
+                    <div class="module-icon"><i class="fas fa-id-card"></i></div>
+                    <h4>ESSP</h4>
+                    <p>Employee Self-Service Portal</p>
+                </div>
+                <div class="module-card" data-module="MJL">
+                    <div class="module-icon"><i class="fas fa-briefcase"></i></div>
+                    <h4>MJL</h4>
+                    <p>Management Job Listing</p>
+                </div>
+                <div class="module-card" data-module="Employee Profile">
+                    <div class="module-icon"><i class="fas fa-address-card"></i></div>
+                    <h4>Employee Profile</h4>
+                    <p>Employee data management</p>
+                </div>
+                <div class="module-card" data-module="Leave">
+                    <div class="module-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <h4>Leave</h4>
+                    <p>Leave application & approval</p>
+                </div>
+                <div class="module-card" data-module="Psychometric">
+                    <div class="module-icon"><i class="fas fa-brain"></i></div>
+                    <h4>Psychometric</h4>
+                    <p>Assessments & development</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>ieHRMS Gamified Survey | Thank you for helping us improve!</p>
+        </footer>
+    </div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-trophy"></i> Survey Complete!</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="celebration">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>Congratulations! You've earned <span class="xp-earned">100</span> XP!</p>
+                <p>Thank you for your valuable feedback. Your responses will help us improve ieHRMS.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-modal" id="closeModalBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
