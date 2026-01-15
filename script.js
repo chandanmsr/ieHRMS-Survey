@@ -1,388 +1,1008 @@
-// Supabase configuration
-const SUPABASE_URL = erixafnalqakldvkscue.supabase.co;
-const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyaXhhZm5hbHFha2xkdmtzY3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0NzE3MDAsImV4cCI6MjA4NDA0NzcwMH0.S42M4MvFYiI8ns_p60GIpbPD7N5yi7mdOGsmx78QqCc;
-
-// Initialize Supabase client
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// DOM Elements
-const questionText = document.getElementById('questionText');
-const questionNum = document.getElementById('questionNum');
-const totalQuestions = document.getElementById('totalQuestions');
-const moduleName = document.getElementById('moduleName');
-const moduleIcon = document.getElementById('moduleIcon');
-const moduleTag = document.getElementById('moduleTag');
-const ratingSlider = document.getElementById('ratingSlider');
-const ratingValue = document.getElementById('ratingValue');
-const ratingEmoji = document.getElementById('ratingEmoji');
-const emojiLabel = document.getElementById('emojiLabel');
-const remarks = document.getElementById('remarks');
-const charCount = document.getElementById('charCount');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const submitBtn = document.getElementById('submitBtn');
-const progressBar = document.querySelector('.progress-bar');
-const progressText = document.getElementById('progressText');
-const xpFill = document.getElementById('xpFill');
-const scoreElement = document.getElementById('score');
-const successModal = document.getElementById('successModal');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const confettiCanvas = document.getElementById('confettiCanvas');
-
-// Game State
-let currentQuestionIndex = 0;
-let questions = [];
-let responses = [];
-let xp = 0;
-
-// Emoji mapping based on rating
-const emojiMap = [
-    { emoji: '😢', label: 'Very Poor' },
-    { emoji: '😞', label: 'Poor' },
-    { emoji: '😐', label: 'Neutral' },
-    { emoji: '🙂', label: 'Good' },
-    { emoji: '😊', label: 'Very Good' },
-    { emoji: '😍', label: 'Excellent' }
+// Complete Survey Data with Sequential Flow - EXACTLY MATCHING EXCEL (with corrections)
+const surveyData = [
+    {
+        id: "recruitment",
+        name: "Recruitment Module",
+        icon: "fa-user-tie",
+        questions: [
+            {
+                id: "1.0",
+                text: "Have You Used the Recruitment Module in ieHRMS web?",
+                type: "yesno",
+                skipLogic: {
+                    ifNo: "skipModule"
+                }
+            },
+            {
+                id: "1.0-no",
+                text: "If answer to Qno. 1 = No then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "1.0",
+                showIf: "No"
+            },
+            {
+                id: "1.1",
+                text: "Have You Used the new All Application Candidate page?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "1.0",
+                showIf: "Yes"
+            },
+            {
+                id: "1.1-no",
+                text: "If answer to Qno. 1.1 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "1.1",
+                showIf: "No"
+            },
+            {
+                id: "1.1-rating",
+                text: "If answer to Qno. 1.1 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "1.1",
+                showIf: "Yes"
+            },
+            {
+                id: "1.1-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "1.1",
+                showIf: "Yes"
+            },
+            {
+                id: "1.1-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "1.1",
+                showIf: "Yes"
+            },
+            {
+                id: "1.2",
+                text: "Have you created any Posts in ieHRMS web using Post Creation menu?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "1.0",
+                showIf: "Yes"
+            },
+            {
+                id: "1.2-no",
+                text: "If answer to Qno. 1.2 = No then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "1.2",
+                showIf: "No"
+            },
+            {
+                id: "1.2-rating",
+                text: "If answer to Qno. 1.2 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "1.2",
+                showIf: "Yes"
+            },
+            {
+                id: "1.2-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "1.2",
+                showIf: "Yes"
+            },
+            {
+                id: "1.2-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "1.2",
+                showIf: "Yes"
+            },
+            {
+                id: "1.3",
+                text: "Have You Used the Recruitment Tracker Feature in ieHRMS web?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "1.0",
+                showIf: "Yes"
+            },
+            {
+                id: "1.3-no",
+                text: "If answer to Qno. 1.3 = No then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "1.3",
+                showIf: "No"
+            },
+            {
+                id: "1.3-rating",
+                text: "If answer to Qno. 1.3 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "1.3",
+                showIf: "Yes"
+            },
+            {
+                id: "1.3-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "1.3",
+                showIf: "Yes"
+            },
+            {
+                id: "1.3-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "1.3",
+                showIf: "Yes"
+            },
+            {
+                id: "1.4",
+                text: "Have You Used the Applicant Tracking System (ATS) in ieHRMS web?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "1.0",
+                showIf: "Yes"
+            },
+            {
+                id: "1.4-no",
+                text: "If answer to Qno. 1.4 = No then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "1.4",
+                showIf: "No"
+            },
+            {
+                id: "1.4-rating",
+                text: "If answer to Qno. 1.4 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "1.4",
+                showIf: "Yes"
+            },
+            {
+                id: "1.4-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "1.4",
+                showIf: "Yes"
+            },
+            {
+                id: "1.4-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "1.4",
+                showIf: "Yes"
+            }
+        ]
+    },
+    {
+        id: "essp",
+        name: "ESSP Module",
+        icon: "fa-users",
+        questions: [
+            {
+                id: "2.0",
+                text: "Have You Used the ESSP Module in ieHRMS web?",
+                type: "yesno",
+                skipLogic: {
+                    ifNo: "skipModule"
+                }
+            },
+            {
+                id: "2.0-no",
+                text: "If answer to Qno. 2 = No then, Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "2.0",
+                showIf: "No"
+            },
+            {
+                id: "2.1",
+                text: "Have You taken any Online Tests / Surveys on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "2.0",
+                showIf: "Yes"
+            },
+            {
+                id: "2.1-no",
+                text: "If answer to Qno. 2.1 = No, then. Why?",
+                type: "mcq",
+                options: ["No Tests or Surveys were ever assigned to me", "I did that on the mobile app version", "Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "2.1",
+                showIf: "No"
+            },
+            {
+                id: "2.1-rating",
+                text: "If answer to Qno. 2.1 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "2.1",
+                showIf: "Yes"
+            },
+            {
+                id: "2.1-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "2.1",
+                showIf: "Yes"
+            },
+            {
+                id: "2.1-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "2.1",
+                showIf: "Yes"
+            },
+            {
+                id: "2.2",
+                text: "Have You made any leave applications / cancelled leave applications on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "2.0",
+                showIf: "Yes"
+            },
+            {
+                id: "2.2-no",
+                text: "If answer to Qno. 2.2 = No, then. Why?",
+                type: "mcq",
+                options: ["I did that on the mobile app version", "Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "2.2",
+                showIf: "No"
+            },
+            {
+                id: "2.2-rating",
+                text: "If answer to Qno. 2.2 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "2.2",
+                showIf: "Yes"
+            },
+            {
+                id: "2.2-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "2.2",
+                showIf: "Yes"
+            },
+            {
+                id: "2.2-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "2.2",
+                showIf: "Yes"
+            },
+            {
+                id: "2.3",
+                text: "Have You made any loan/advance applications on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "2.0",
+                showIf: "Yes"
+            },
+            {
+                id: "2.3-no",
+                text: "If answer to Qno. 2.3 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "2.3",
+                showIf: "No"
+            },
+            {
+                id: "2.3-rating",
+                text: "If answer to Qno. 2.3 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "2.3",
+                showIf: "Yes"
+            },
+            {
+                id: "2.3-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "2.3",
+                showIf: "Yes"
+            },
+            {
+                id: "2.3-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "2.3",
+                showIf: "Yes"
+            },
+            {
+                id: "2.4",
+                text: "Have used any of the ESSP Admin features on web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "2.0",
+                showIf: "Yes"
+            },
+            {
+                id: "2.4-no",
+                text: "If answer to Qno. 2.4 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "2.4",
+                showIf: "No"
+            },
+            {
+                id: "2.4-rating",
+                text: "If answer to Qno. 2.4 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "2.4",
+                showIf: "Yes"
+            },
+            {
+                id: "2.4-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "2.4",
+                showIf: "Yes"
+            },
+            {
+                id: "2.4-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "2.4",
+                showIf: "Yes"
+            }
+        ]
+    },
+    {
+        id: "mjl",
+        name: "MJL Module",
+        icon: "fa-tasks",
+        questions: [
+            {
+                id: "3.0",
+                text: "Have You Used the MJL Module in ieHRMS web?",
+                type: "yesno",
+                skipLogic: {
+                    ifNo: "skipModule"
+                }
+            },
+            {
+                id: "3.0-no",
+                text: "If answer to Qno. 3 = No then, Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "3.0",
+                showIf: "No"
+            },
+            {
+                id: "3.1",
+                text: "Have You created any MJLs on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "3.0",
+                showIf: "Yes"
+            },
+            {
+                id: "3.1-no",
+                text: "If answer to Qno. 3.1 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "3.1",
+                showIf: "No"
+            },
+            {
+                id: "3.1-rating",
+                text: "If answer to Qno. 3.1 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "3.1",
+                showIf: "Yes"
+            },
+            {
+                id: "3.1-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "3.1",
+                showIf: "Yes"
+            },
+            {
+                id: "3.2",
+                text: "Have You created any SOPs on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "3.0",
+                showIf: "Yes"
+            },
+            {
+                id: "3.2-no",
+                text: "If answer to Qno. 3.2 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "3.2",
+                showIf: "No"
+            },
+            {
+                id: "3.2-rating",
+                text: "If answer to Qno. 3.2 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "3.2",
+                showIf: "Yes"
+            },
+            {
+                id: "3.2-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "3.2",
+                showIf: "Yes"
+            },
+            {
+                id: "3.3",
+                text: "Do you have any suggestion for the MJL Dashboard? (Only if Applicable to you)",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "3.0",
+                showIf: "Yes"
+            }
+        ]
+    },
+    {
+        id: "employeeProfile",
+        name: "Employee Profile",
+        icon: "fa-id-card",
+        questions: [
+            {
+                id: "4.0",
+                text: "Have You Used the Employee profile Module in ieHRMS web?",
+                type: "yesno",
+                skipLogic: {
+                    ifNo: "skipModule"
+                }
+            },
+            {
+                id: "4.0-no",
+                text: "If answer to Qno. 4 = No then, Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "It's not relevant to me", "I prefer the Mobile App version for that"],
+                conditional: true,
+                dependsOn: "4.0",
+                showIf: "No"
+            },
+            {
+                id: "4.1",
+                text: "Have You used the Candidate profile page on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "4.0",
+                showIf: "Yes"
+            },
+            {
+                id: "4.1-no",
+                text: "If answer to Qno. 4.1 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "4.1",
+                showIf: "No"
+            },
+            {
+                id: "4.1-rating",
+                text: "If answer to Qno. 4.1 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "4.1",
+                showIf: "Yes"
+            },
+            {
+                id: "4.1-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "4.1",
+                showIf: "Yes"
+            },
+            {
+                id: "4.1-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "4.1",
+                showIf: "Yes"
+            },
+            {
+                id: "4.2",
+                text: "Have You used the Employee Profile profile page on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "4.0",
+                showIf: "Yes"
+            },
+            {
+                id: "4.2-no",
+                text: "If answer to Qno. 4.2 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "4.2",
+                showIf: "No"
+            },
+            {
+                id: "4.2-rating",
+                text: "If answer to Qno. 4.2 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "4.2",
+                showIf: "Yes"
+            },
+            {
+                id: "4.2-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "4.2",
+                showIf: "Yes"
+            },
+            {
+                id: "4.2-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "4.2",
+                showIf: "Yes"
+            },
+            {
+                id: "4.3",
+                text: "Have You used the Candidate Document List on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "4.0",
+                showIf: "Yes"
+            },
+            {
+                id: "4.3-no",
+                text: "If answer to Qno. 4.3 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "4.3",
+                showIf: "No"
+            },
+            {
+                id: "4.3-rating",
+                text: "If answer to Qno. 4.3 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "4.3",
+                showIf: "Yes"
+            },
+            {
+                id: "4.3-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "4.3",
+                showIf: "Yes"
+            },
+            {
+                id: "4.3-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "4.3",
+                showIf: "Yes"
+            },
+            {
+                id: "4.4",
+                text: "Have You used the Employee Document List on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "4.0",
+                showIf: "Yes"
+            },
+            {
+                id: "4.4-no",
+                text: "If answer to Qno. 4.4 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "4.4",
+                showIf: "No"
+            },
+            {
+                id: "4.4-rating",
+                text: "If answer to Qno. 4.4 = Yes, then. How much would you rate it out of 5?", // Fixed: Changed from 4.2 to 4.4
+                type: "rating",
+                conditional: true,
+                dependsOn: "4.4",
+                showIf: "Yes"
+            },
+            {
+                id: "4.4-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "4.4",
+                showIf: "Yes"
+            },
+            {
+                id: "4.4-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "4.4",
+                showIf: "Yes"
+            }
+        ]
+    },
+    {
+        id: "leave",
+        name: "Leave Module",
+        icon: "fa-umbrella-beach",
+        questions: [
+            {
+                id: "5.0",
+                text: "Have You Used the Leave Module in ieHRMS web?",
+                type: "yesno",
+                skipLogic: {
+                    ifNo: "skipModule"
+                }
+            },
+            {
+                id: "5.0-no",
+                text: "If answer to Qno. 5 = No then, Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "It's not relevant to me", "I prefer the Mobile App version for that"],
+                conditional: true,
+                dependsOn: "5.0",
+                showIf: "No"
+            },
+            {
+                id: "5.1",
+                text: "Have You used the Leave Request menu on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "5.0",
+                showIf: "Yes"
+            },
+            {
+                id: "5.1-no",
+                text: "If answer to Qno. 5.1 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "5.1",
+                showIf: "No"
+            },
+            {
+                id: "5.1-rating",
+                text: "If answer to Qno. 5.1 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "5.1",
+                showIf: "Yes"
+            },
+            {
+                id: "5.1-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "5.1",
+                showIf: "Yes"
+            },
+            {
+                id: "5.1-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "5.1",
+                showIf: "Yes"
+            },
+            {
+                id: "5.2",
+                text: "Have You used the Leave Master menu on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "5.0",
+                showIf: "Yes"
+            },
+            {
+                id: "5.2-no",
+                text: "If answer to Qno. 5.2 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "5.2",
+                showIf: "No"
+            },
+            {
+                id: "5.2-rating",
+                text: "If answer to Qno. 5.2 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "5.2",
+                showIf: "Yes"
+            },
+            {
+                id: "5.2-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "5.2",
+                showIf: "Yes"
+            },
+            {
+                id: "5.2-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "5.2",
+                showIf: "Yes"
+            },
+            {
+                id: "5.3",
+                text: "Have You used the Leave Application menu on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "5.0",
+                showIf: "Yes"
+            },
+            {
+                id: "5.3-no",
+                text: "If answer to Qno. 5.3 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "5.3",
+                showIf: "No"
+            },
+            {
+                id: "5.3-rating",
+                text: "If answer to Qno. 5.3 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "5.3",
+                showIf: "Yes"
+            },
+            {
+                id: "5.3-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "5.3",
+                showIf: "Yes"
+            },
+            {
+                id: "5.3-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "5.3",
+                showIf: "Yes"
+            },
+            {
+                id: "5.4",
+                text: "Have You used the Attendance menu on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "5.0",
+                showIf: "Yes"
+            },
+            {
+                id: "5.4-no",
+                text: "If answer to Qno. 5.4 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "5.4",
+                showIf: "No"
+            },
+            {
+                id: "5.4-rating",
+                text: "If answer to Qno. 5.4 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "5.4",
+                showIf: "Yes"
+            },
+            {
+                id: "5.4-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "5.4",
+                showIf: "Yes"
+            },
+            {
+                id: "5.4-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "5.4",
+                showIf: "Yes"
+            },
+            {
+                id: "5.5",
+                text: "Do you have any suggestion for the Leave Module Dashboard?",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "5.0",
+                showIf: "Yes"
+            }
+        ]
+    },
+    {
+        id: "psychometric",
+        name: "Psychometric Module",
+        icon: "fa-brain",
+        questions: [
+            {
+                id: "6.0",
+                text: "Have You Used the Psychometric Module in ieHRMS web?", // Fixed: Changed from "Leave Module" to "Psychometric Module"
+                type: "yesno",
+                skipLogic: {
+                    ifNo: "skipModule"
+                }
+            },
+            {
+                id: "6.0-no",
+                text: "If answer to Qno. 6 = No then, Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "It's not relevant to me", "I prefer the Mobile App version for that"],
+                conditional: true,
+                dependsOn: "6.0",
+                showIf: "No"
+            },
+            {
+                id: "6.1",
+                text: "Have You used this module to assign test to employees on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "6.0",
+                showIf: "Yes"
+            },
+            {
+                id: "6.1-no",
+                text: "If answer to Qno. 6.1 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "6.1",
+                showIf: "No"
+            },
+            {
+                id: "6.1-rating",
+                text: "If answer to Qno. 6.1 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "6.1",
+                showIf: "Yes"
+            },
+            {
+                id: "6.1-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "6.1",
+                showIf: "Yes"
+            },
+            {
+                id: "6.1-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "6.1",
+                showIf: "Yes"
+            },
+            {
+                id: "6.2",
+                text: "Have You used this module to check Psychometric reports of Candidates / Employee / Educyte Trainee on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "6.0",
+                showIf: "Yes"
+            },
+            {
+                id: "6.2-no",
+                text: "If answer to Qno. 6.2 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "6.2",
+                showIf: "No"
+            },
+            {
+                id: "6.2-rating",
+                text: "If answer to Qno. 6.2 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "6.2",
+                showIf: "Yes"
+            },
+            {
+                id: "6.2-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "6.2",
+                showIf: "Yes"
+            },
+            {
+                id: "6.2-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "6.2",
+                showIf: "Yes"
+            },
+            {
+                id: "6.3",
+                text: "Have You used this module to create surveys on the web version of ieHRMS?",
+                type: "yesno",
+                conditional: true,
+                dependsOn: "6.0",
+                showIf: "Yes"
+            },
+            {
+                id: "6.3-no",
+                text: "If answer to Qno. 6.3 = No, then. Why?",
+                type: "mcq",
+                options: ["Did not like the layout", "It is very complex to use", "No one told me about it", "It's not relevant to me"],
+                conditional: true,
+                dependsOn: "6.3",
+                showIf: "No"
+            },
+            {
+                id: "6.3-rating",
+                text: "If answer to Qno. 6.3 = Yes, then. How much would you rate it out of 5?",
+                type: "rating",
+                conditional: true,
+                dependsOn: "6.3",
+                showIf: "Yes"
+            },
+            {
+                id: "6.3-favorite",
+                text: "What are your most and least favourite things about this?",
+                type: "text",
+                conditional: true,
+                dependsOn: "6.3",
+                showIf: "Yes"
+            },
+            {
+                id: "6.3-suggestions",
+                text: "Any suggestions / message for the developer",
+                type: "longtext",
+                conditional: true,
+                dependsOn: "6.3",
+                showIf: "Yes"
+            }
+        ]
+    }
 ];
-
-// Module icons mapping
-const moduleIcons = {
-    'Recruitment': 'fas fa-user-tie',
-    'ESSP': 'fas fa-id-card',
-    'MJL': 'fas fa-briefcase',
-    'Employee Profile': 'fas fa-address-card',
-    'Leave': 'fas fa-calendar-alt',
-    'Psychometric': 'fas fa-brain'
-};
-
-// Module colors mapping
-const moduleColors = {
-    'Recruitment': '#FF6B6B',
-    'ESSP': '#4ECDC4',
-    'MJL': '#FFD166',
-    'Employee Profile': '#06D6A0',
-    'Leave': '#118AB2',
-    'Psychometric': '#9D4EDD'
-};
-
-// Initialize the survey
-async function initSurvey() {
-    try {
-        // Fetch questions from Supabase
-        const { data, error } = await supabase
-            .from('survey_questions')
-            .select('*')
-            .order('question_order', { ascending: true });
-
-        if (error) throw error;
-
-        questions = data;
-        totalQuestions.textContent = questions.length;
-        
-        // Initialize responses array
-        responses = questions.map(q => ({
-            question_id: q.id,
-            rating: 3, // Default rating
-            remarks: ''
-        }));
-
-        // Load the first question
-        loadQuestion(currentQuestionIndex);
-        updateProgress();
-        setupEventListeners();
-    } catch (error) {
-        console.error('Error loading questions:', error);
-        questionText.textContent = 'Error loading questions. Please refresh the page.';
-    }
-}
-
-// Load question at given index
-function loadQuestion(index) {
-    if (index < 0 || index >= questions.length) return;
-    
-    const question = questions[index];
-    const response = responses[index];
-    
-    // Update question text and number
-    questionText.textContent = question.question_text;
-    questionNum.textContent = index + 1;
-    
-    // Update module info
-    moduleName.textContent = question.module_name;
-    moduleIcon.className = moduleIcons[question.module_name] || 'fas fa-question-circle';
-    moduleTag.style.background = `linear-gradient(to right, ${moduleColors[question.module_name] || '#8e2de2'}, ${adjustColor(moduleColors[question.module_name] || '#8e2de2', 30)})`;
-    
-    // Update rating slider and emoji
-    ratingSlider.value = response.rating;
-    updateEmoji(response.rating);
-    
-    // Update remarks
-    remarks.value = response.remarks;
-    charCount.textContent = response.remarks.length;
-    
-    // Update button states
-    prevBtn.disabled = index === 0;
-    nextBtn.style.display = index === questions.length - 1 ? 'none' : 'block';
-    submitBtn.style.display = index === questions.length - 1 ? 'block' : 'none';
-}
-
-// Update emoji based on rating
-function updateEmoji(rating) {
-    ratingValue.textContent = rating;
-    ratingEmoji.textContent = emojiMap[rating].emoji;
-    emojiLabel.textContent = emojiMap[rating].label;
-    
-    // Add animation
-    ratingEmoji.style.transform = 'scale(1.2)';
-    setTimeout(() => {
-        ratingEmoji.style.transform = 'scale(1)';
-    }, 200);
-}
-
-// Update progress bar and XP
-function updateProgress() {
-    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-    progressBar.style.width = `${progress}%`;
-    progressText.textContent = `${Math.round(progress)}%`;
-    
-    // Update XP (10 XP per question + bonus for completing)
-    xp = (currentQuestionIndex + 1) * 10;
-    scoreElement.textContent = xp;
-    
-    // Update XP bar
-    const xpProgress = ((currentQuestionIndex + 1) / questions.length) * 100;
-    xpFill.style.width = `${xpProgress}%`;
-}
-
-// Save response for current question
-function saveResponse() {
-    responses[currentQuestionIndex].rating = parseInt(ratingSlider.value);
-    responses[currentQuestionIndex].remarks = remarks.value;
-}
-
-// Submit all responses to Supabase
-async function submitResponses() {
-    try {
-        // Save the last response
-        saveResponse();
-        
-        // Submit each response to Supabase
-        for (const response of responses) {
-            const { error } = await supabase
-                .from('survey_responses')
-                .insert([response]);
-            
-            if (error) throw error;
-        }
-        
-        // Show success modal
-        showSuccessModal();
-        
-    } catch (error) {
-        console.error('Error submitting responses:', error);
-        alert('There was an error submitting your responses. Please try again.');
-    }
-}
-
-// Show success modal with confetti
-function showSuccessModal() {
-    successModal.style.display = 'flex';
-    createConfetti();
-    
-    // Update XP earned
-    document.querySelector('.xp-earned').textContent = xp + 40; // Bonus XP
-    
-    // Play celebration sound if available
-    try {
-        const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
-        audio.volume = 0.3;
-        audio.play();
-    } catch (e) {
-        // Audio not essential, continue without it
-    }
-}
-
-// Create confetti animation
-function createConfetti() {
-    const ctx = confettiCanvas.getContext('2d');
-    confettiCanvas.width = window.innerWidth;
-    confettiCanvas.height = window.innerHeight;
-    
-    const confettiPieces = [];
-    const colors = ['#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', '#118AB2', '#9D4EDD', '#FF9F1C'];
-    
-    // Create confetti pieces
-    for (let i = 0; i < 150; i++) {
-        confettiPieces.push({
-            x: Math.random() * confettiCanvas.width,
-            y: Math.random() * confettiCanvas.height - confettiCanvas.height,
-            r: Math.random() * 10 + 5,
-            d: Math.random() * 5 + 2,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            tilt: Math.random() * 10 - 10,
-            tiltAngle: 0,
-            tiltAngleIncrement: Math.random() * 0.1 + 0.05
-        });
-    }
-    
-    // Animation function
-    function animateConfetti() {
-        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-        
-        for (let i = 0; i < confettiPieces.length; i++) {
-            const p = confettiPieces[i];
-            
-            // Update position
-            p.y += p.d;
-            p.x += Math.sin(p.tiltAngle) * 2;
-            p.tiltAngle += p.tiltAngleIncrement;
-            
-            // Draw confetti piece
-            ctx.beginPath();
-            ctx.lineWidth = p.r / 2;
-            ctx.strokeStyle = p.color;
-            ctx.moveTo(p.x + p.tilt, p.y);
-            ctx.lineTo(p.x + p.tilt + p.r / 2, p.y + p.r);
-            ctx.stroke();
-            
-            // Reset confetti piece if it falls off screen
-            if (p.y > confettiCanvas.height) {
-                confettiPieces[i] = {
-                    x: Math.random() * confettiCanvas.width,
-                    y: -20,
-                    r: p.r,
-                    d: p.d,
-                    color: p.color,
-                    tilt: p.tilt,
-                    tiltAngle: p.tiltAngle,
-                    tiltAngleIncrement: p.tiltAngleIncrement
-                };
-            }
-        }
-        
-        // Continue animation if modal is still open
-        if (successModal.style.display === 'flex') {
-            requestAnimationFrame(animateConfetti);
-        }
-    }
-    
-    animateConfetti();
-}
-
-// Helper function to adjust color brightness
-function adjustColor(color, amount) {
-    let usePound = false;
-    
-    if (color[0] === "#") {
-        color = color.slice(1);
-        usePound = true;
-    }
-    
-    const num = parseInt(color, 16);
-    let r = (num >> 16) + amount;
-    let g = ((num >> 8) & 0x00FF) + amount;
-    let b = (num & 0x0000FF) + amount;
-    
-    r = Math.min(Math.max(0, r), 255);
-    g = Math.min(Math.max(0, g), 255);
-    b = Math.min(Math.max(0, b), 255);
-    
-    return (usePound ? "#" : "") + (b | (g << 8) | (r << 16)).toString(16).padStart(6, '0');
-}
-
-// Set up event listeners
-function setupEventListeners() {
-    // Rating slider change
-    ratingSlider.addEventListener('input', function() {
-        const rating = parseInt(this.value);
-        updateEmoji(rating);
-        saveResponse();
-    });
-    
-    // Remarks textarea input
-    remarks.addEventListener('input', function() {
-        // Limit to 300 characters
-        if (this.value.length > 300) {
-            this.value = this.value.substring(0, 300);
-        }
-        charCount.textContent = this.value.length;
-        saveResponse();
-    });
-    
-    // Previous button
-    prevBtn.addEventListener('click', function() {
-        if (currentQuestionIndex > 0) {
-            saveResponse();
-            currentQuestionIndex--;
-            loadQuestion(currentQuestionIndex);
-            updateProgress();
-        }
-    });
-    
-    // Next button
-    nextBtn.addEventListener('click', function() {
-        if (currentQuestionIndex < questions.length - 1) {
-            saveResponse();
-            currentQuestionIndex++;
-            loadQuestion(currentQuestionIndex);
-            updateProgress();
-        }
-    });
-    
-    // Submit button
-    submitBtn.addEventListener('click', submitResponses);
-    
-    // Close modal button
-    closeModalBtn.addEventListener('click', function() {
-        successModal.style.display = 'none';
-    });
-    
-    // Close modal when clicking outside
-    successModal.addEventListener('click', function(e) {
-        if (e.target === successModal) {
-            successModal.style.display = 'none';
-        }
-    });
-    
-    // Module cards click
-    document.querySelectorAll('.module-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const module = this.getAttribute('data-module');
-            // Find the first question for this module
-            const questionIndex = questions.findIndex(q => q.module_name === module);
-            if (questionIndex !== -1) {
-                saveResponse();
-                currentQuestionIndex = questionIndex;
-                loadQuestion(currentQuestionIndex);
-                updateProgress();
-                
-                // Scroll to question
-                document.querySelector('.survey-container').scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-    
-    // Add some interactive hover effects to module cards
-    document.querySelectorAll('.module-card').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-8px) scale(1.03)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-    
-    // Window resize for confetti canvas
-    window.addEventListener('resize', function() {
-        if (successModal.style.display === 'flex') {
-            confettiCanvas.width = window.innerWidth;
-            confettiCanvas.height = window.innerHeight;
-        }
-    });
-}
-
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', initSurvey);
